@@ -17,7 +17,7 @@ formatted_time () {
     # { time stuff }: output of stuff -> stdout, time -> stderr
     if ! { time "$@"; } > "$tmp_cmd_output" 2> "$tmp_time"
     then
-       	error "$* failed"
+        error "$* failed"
         return
     fi
 

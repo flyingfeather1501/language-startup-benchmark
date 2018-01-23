@@ -26,7 +26,7 @@ formatted_time () {
     echo '{"status":"success",'\
           '"time":"'"$time_seconds"'",'\
           '"language":"'"$language"'",'\
-          '"output":"'"$output"'"'\
+          '"output":"'"$output"'",'\
           '"unit":"second"}'
     rm $tmp_time $tmp_cmd_output
 }

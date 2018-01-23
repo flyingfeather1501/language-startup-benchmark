@@ -79,44 +79,23 @@ formatted_time python python -c 'print("hello")'
 formatted_time perl perl -e 'print("hello\n")'
 formatted_time ruby ruby -e 'puts "hello"'
 formatted_time lua lua -e 'print("hello")'
+# shell
 formatted_time bash bash -c 'echo "hello"'
 formatted_time fish fish -c 'echo "hello"'
 
+# lisp family
 formatted_time racket racket -e '(displayln "hello")'
 formatted_time guile guile -c '(display "hello\n")'
 formatted_time sbcl sbcl --noinform --non-interactive --eval '(format t "hello~%")'
 formatted_time clisp clisp -q -x '(format t "hello~%")'
 formatted_time "emacs lisp" emacs -batch -eval '(princ "hello\n")'
 
+# js family
 formatted_time node node --eval 'console.log("hello");'
 formatted_time gjs gjs -c 'print("hello");'
 
-compile_run_and_time:go /dev/fd/0 <<'GOLANG'
-package main
-
-import "fmt"
-
-func main() {
-    fmt.Println("hello")
-}
-GOLANG
-
-compile_run_and_time:gcc /dev/fd/0 <<'C'
-#include<stdio.h>
-
-int main() {
-    printf("hello\n");
-    return 0;
-}
-C
-
-compile_run_and_time:vala /dev/fd/0 <<'VALA'
-void main() {
-    stdout.printf("hello\n");
-}
-VALA
-
-compile_run_and_time:haskell /dev/fd/0 <<'HASKELL'
-main :: IO()
-main = print "Hello"
-HASKELL
+# compiled
+compile_run_and_time:go hello.go
+compile_run_and_time:gcc hello.c
+compile_run_and_time:vala hello.vala
+compile_run_and_time:haskell hello.hs

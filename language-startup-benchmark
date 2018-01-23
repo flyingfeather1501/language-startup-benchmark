@@ -68,8 +68,9 @@ compile_run_and_time:haskell () {
     # $1: source file
     tmp=$(mktemp --tmpdir tmp.XXXX.hs)
     tmp_out=$(mktemp)
-    # cat "$1" > "$tmp"
-    gcc -o "$tmp_out" "$tmp"
+    cat "$1" > "$tmp"
+    docker run --rm haskell -v /tmp:/tmp ghc -o "$tmp_out" "$tmp"
+    # ghc -o "$tmp_out" "$tmp"
     formatted_time "haskell (compiled)" "$tmp_out" # run it
     # error "haskell has problem running currently... yeah."
     rm "$tmp" "$tmp_out"

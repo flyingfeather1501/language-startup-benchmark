@@ -75,6 +75,16 @@ compile_run_and_time:haskell () {
     rm "$tmp" "$tmp_out"
 }
 
+compile_run_and_time:java () {
+    # $1: source file
+    tmpdir=$(mktemp -d --tmpdir)
+    tmp="$tmpdir"/hello.java
+    cat "$1" > "$tmp"
+    javac "$tmp"
+    formatted_time "java (compiled)" java -cp "$tmpdir" hello
+    rm -r "$tmpdir"
+}
+
 # interpreted languages
 formatted_time python python -c 'print("hello")'
 formatted_time perl perl -e 'print("hello\n")'
@@ -100,3 +110,4 @@ compile_run_and_time:go hello.go
 compile_run_and_time:gcc hello.c
 compile_run_and_time:vala hello.vala
 compile_run_and_time:haskell hello.hs
+compile_run_and_time:java hello.java

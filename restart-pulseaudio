@@ -1,6 +1,0 @@
-#!/bin/bash
-# restart pulseaudio
-# because gnome-control-center doesn't let me run bind keys to run commands in sequence
-pulseaudio -k
-pulseaudio --start
-notify-send "PulseAudio has been restarted" " " --icon view-refresh

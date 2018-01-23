@@ -1,6 +1,0 @@
-#!/usr/bin/env fish
-
-set R (dec2hex (echo $argv[1] | cut -d',' -f 1))
-set G (dec2hex (echo $argv[1] | cut -d',' -f 2))
-set B (dec2hex (echo $argv[1] | cut -d',' -f 3))
-echo $R$G$B

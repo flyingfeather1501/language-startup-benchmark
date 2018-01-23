@@ -1,3 +1,0 @@
-#!/bin/bash
-# hex2dec wrapper, ugly error messages
-printf "%d\n" 0x"$1"

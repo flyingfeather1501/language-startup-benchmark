@@ -1,3 +1,0 @@
-#!/bin/bash
-# wrapper around printf
-printf "%X\n" "$1"

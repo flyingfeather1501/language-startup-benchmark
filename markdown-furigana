@@ -1,8 +1,0 @@
-#!/bin/bash
-# take in a text file, scan for {{text:ruby}} pattern, replace with <ruby>text<rt>ruby</rt></ruby>
-for field in $(awk -vRS="}}" -vFS="{{" '{print $2}' "$1"); do
-  text=$(printf $field | cut -d':' -f 1)
-  ruby=$(printf $field | cut -d':' -f 2)
-  newfield="<ruby>${text}<rt>${ruby}</rt></ruby>"
-  sed -i s+'{{'$field'}}'+"$newfield"+g $1 # side effect, but, well.
-done

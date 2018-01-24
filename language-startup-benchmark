@@ -108,6 +108,7 @@ formatted_time gjs gjs -c 'print("hello");'
 
 # compiled
 compile_run_and_time:go hello.go
+formatted_time "go (go run)" go run hello.go
 compile_run_and_time:gcc hello.c
 compile_run_and_time:vala hello.vala
 compile_run_and_time:haskell hello.hs

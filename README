@@ -1,2 +1,7 @@
-(Mostly) Bash scripts by Moonlight Feather.
-Uses the Unlicense.
+# language-startup-benchmark
+
+When using a script, the speed the language starts up matters the most. Regardless of how fast it can process data, a language that starts up slower will end up slower for a simple script.
+
+This project aims to run a simple benchmark with hello world for many languages.
+
+Licensed under the MIT license.

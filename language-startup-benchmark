@@ -68,6 +68,8 @@ report_time sbcl sbcl --noinform --non-interactive --eval '(format t "hello~%")'
 report_time clisp clisp -q -x '(format t "hello~%")'
 report_time "emacs lisp" emacs -batch -eval '(princ "hello\n")'
 
+report_time clojure clojure -e '(println "hello")'
+
 # js family
 report_time node node --eval 'console.log("hello");'
 report_time gjs gjs -c 'print("hello");'

@@ -16,7 +16,7 @@ quiet () {
 }
 
 # time the command and format the result
-formatted_time () {
+report_time () {
     TIMEFORMAT="%3R"
     language="$1"; shift 1
     tmp_time=$(mktemp)
@@ -53,24 +53,34 @@ exe_folder_java=$(compile:java hello.java)
 exe_rust=$(compile:rust hello.rs)
 
 # interpreted languages
-formatted_time python python -c 'print("hello")'
-formatted_time perl perl -e 'print("hello\n")'
-formatted_time ruby ruby -e 'puts "hello"'
-formatted_time lua lua -e 'print("hello")'
+report_time python python -c 'print("hello")'
+report_time perl perl -e 'print("hello\n")'
+report_time ruby ruby -e 'puts "hello"'
+report_time lua lua -e 'print("hello")'
 # shell
-formatted_time bash bash -c 'echo "hello"'
-formatted_time fish fish -c 'echo "hello"'
+report_time bash bash -c 'echo "hello"'
+report_time fish fish -c 'echo "hello"'
 
 # lisp family
-formatted_time racket racket -e '(displayln "hello")'
-formatted_time guile guile -c '(display "hello\n")'
-formatted_time sbcl sbcl --noinform --non-interactive --eval '(format t "hello~%")'
-formatted_time clisp clisp -q -x '(format t "hello~%")'
-formatted_time "emacs lisp" emacs -batch -eval '(princ "hello\n")'
+report_time racket racket -e '(displayln "hello")'
+report_time guile guile -c '(display "hello\n")'
+report_time sbcl sbcl --noinform --non-interactive --eval '(format t "hello~%")'
+report_time clisp clisp -q -x '(format t "hello~%")'
+report_time "emacs lisp" emacs -batch -eval '(princ "hello\n")'
 
 # js family
-formatted_time node node --eval 'console.log("hello");'
-formatted_time gjs gjs -c 'print("hello");'
+report_time node node --eval 'console.log("hello");'
+report_time gjs gjs -c 'print("hello");'
+
+report_time "go (go run)" go run hello.go # this times the compilation as well
+
+# compiled languages
+report_time go "$exe_go"
+report_time gcc "$exe_gcc"
+report_time haskell "$exe_haskell"
+report_time vala "$exe_vala"
+report_time java java -cp "$exe_folder_java" hello
+report_time rust "$exe_rust"
 
 # clean up compiled artifacts
 rm "$exe_rust" "$exe_go" "$exe_gcc" "$exe_haskell" "$exe_vala" "$exe_folder_java" -rf

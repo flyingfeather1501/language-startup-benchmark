@@ -7,6 +7,14 @@
 # I'm taking the "real" field in bash's "time" output
 # (Specifically, TIMEFORMAT="%3R")
 
+# compiling functions
+source compile.bash
+
+# slightly easier to read
+quiet () {
+    "$@" >/dev/null 2>/dev/null
+}
+
 # time the command and format the result
 formatted_time () {
     TIMEFORMAT="%3R"
@@ -36,55 +44,13 @@ error () {
           '"message": "'"$*"'"}'
 }
 
-compile_run_and_time:go () {
-    # $1: source file
-    tmp=$(mktemp); tmp_out=$(mktemp)
-    go tool compile -o "$tmp" "$1" && go tool link -o "$tmp_out" "$tmp"
-    formatted_time "go (compiled)" "$tmp_out" # run it
-    rm "$tmp" "$tmp_out"
-}
-
-compile_run_and_time:gcc () {
-    # $1: source file
-    tmp=$(mktemp --tmpdir tmp.XXXX.c) # *.c is required for c
-    tmp_out=$(mktemp)
-    cat "$1" > "$tmp"
-    gcc -o "$tmp_out" "$tmp"
-    formatted_time "gcc (compiled)" "$tmp_out" # run it
-    rm "$tmp" "$tmp_out"
-}
-
-compile_run_and_time:vala () {
-    # $1: source file
-    tmp=$(mktemp --tmpdir tmp.XXXX.vala)
-    tmp_out=$(mktemp)
-    cat "$1" > "$tmp"
-    valac -o "$tmp_out" "$tmp"
-    formatted_time "vala (compiled)" "$tmp_out" # run it
-    rm "$tmp" "$tmp_out"
-}
-
-compile_run_and_time:haskell () {
-    # $1: source file
-    tmp=$(mktemp --tmpdir tmp.XXXX.hs)
-    tmp_out=$(mktemp)
-    cat "$1" > "$tmp"
-    docker run --rm haskell -v /tmp:/tmp ghc -o "$tmp_out" "$tmp"
-    # ghc -o "$tmp_out" "$tmp"
-    formatted_time "haskell (compiled)" "$tmp_out" # run it
-    # error "haskell has problem running currently... yeah."
-    rm "$tmp" "$tmp_out"
-}
-
-compile_run_and_time:java () {
-    # $1: source file
-    tmpdir=$(mktemp -d --tmpdir)
-    tmp="$tmpdir"/hello.java
-    cat "$1" > "$tmp"
-    javac "$tmp"
-    formatted_time "java (compiled)" java -cp "$tmpdir" hello
-    rm -r "$tmpdir"
-}
+# get compiled executables ready
+exe_go=$(compile:go hello.go)
+exe_gcc=$(compile:gcc hello.c)
+exe_haskell=$(compile:haskell hello.hs)
+exe_vala=$(compile:vala hello.vala)
+exe_folder_java=$(compile:java hello.java)
+exe_rust=$(compile:rust hello.rs)
 
 # interpreted languages
 formatted_time python python -c 'print("hello")'
@@ -106,10 +72,5 @@ formatted_time "emacs lisp" emacs -batch -eval '(princ "hello\n")'
 formatted_time node node --eval 'console.log("hello");'
 formatted_time gjs gjs -c 'print("hello");'
 
-# compiled
-compile_run_and_time:go hello.go
-formatted_time "go (go run)" go run hello.go
-compile_run_and_time:gcc hello.c
-compile_run_and_time:vala hello.vala
-compile_run_and_time:haskell hello.hs
-compile_run_and_time:java hello.java
+# clean up compiled artifacts
+rm "$exe_rust" "$exe_go" "$exe_gcc" "$exe_haskell" "$exe_vala" "$exe_folder_java" -rf

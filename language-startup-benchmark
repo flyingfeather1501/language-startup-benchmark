@@ -15,6 +15,19 @@ quiet () {
     "$@" >/dev/null 2>/dev/null
 }
 
+report_success () {
+    # report_success <language> <output> <time>
+    cat <<JSON
+{"status":"success","report":{"language":"$1","output":"$2","time":$3,"unit":"second"}}
+JSON
+}
+
+report_status () {
+    cat <<JSON
+{"status": "$1"}
+JSON
+}
+
 # time the command and format the result
 report_time () {
     TIMEFORMAT="%3R"
@@ -31,12 +44,7 @@ report_time () {
 
     time_seconds=$(cat "$tmp_time")
     output=$(cat "$tmp_cmd_output")
-    echo '{"status":"success",'\
-          '"time":"'"$time_seconds"'",'\
-          '"language":"'"$language"'",'\
-          '"output":"'"$output"'",'\
-          '"unit":"second"}'
-    rm $tmp_time $tmp_cmd_output
+    report_success "$language" "$output" "$time_seconds"
 }
 
 error () {
@@ -45,6 +53,7 @@ error () {
 }
 
 # get compiled executables ready
+report_status "compiling"
 exe_go=$(compile:go hello.go)
 exe_gcc=$(compile:gcc hello.c)
 exe_haskell=$(compile:haskell hello.hs)

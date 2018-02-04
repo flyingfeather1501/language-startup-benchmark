@@ -88,6 +88,8 @@ report_time io io hello.io
 report_time node node --eval 'console.log("hello");'
 report_time gjs gjs -c 'print("hello");'
 
+report_time php php -n -r 'print("hello\n");' # -n: don't use configuration files
+
 report_time "go (go run)" go run hello.go # this times the compilation as well
 
 # compiled languages

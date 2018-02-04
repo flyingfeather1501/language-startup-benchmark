@@ -2,6 +2,11 @@
 # compiling functions
 # should take in a source file and return (to stdout) an executable of some sort
 
+# slightly easier to read
+quiet () {
+    "$@" >/dev/null 2>/dev/null
+}
+
 compile:rust () {
     tmp=$(mktemp --tmpdir tmp-XXXX.rs)
     out=$(mktemp --tmpdir exe.rust.XXXX)

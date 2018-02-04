@@ -10,11 +10,6 @@
 source compile.bash # compile:lang stuff
 source report.bash # report_time etc.
 
-# slightly easier to read
-quiet () {
-    "$@" >/dev/null 2>/dev/null
-}
-
 # get compiled executables ready
 report_status "compiling"
 exe_go=$(compile:go hello.go)

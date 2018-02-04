@@ -55,6 +55,7 @@ compile_and_time gcc compile:gcc hello.c
 compile_and_time haskell compile:haskell hello.hs
 compile_and_time vala compile:vala hello.vala
 compile_and_time rust compile:rust hello.rs
+compile_and_time nim compile:nim hello.nim
 
 # I'm unable to generalize the execution for java, so this will have to do
 exe_folder_java=$(compile:java hello.java)

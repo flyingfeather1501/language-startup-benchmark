@@ -61,3 +61,11 @@ compile:java () {
     echo "$tmpdir"
 }
 
+compile:nim () {
+    src=$(mktemp --tmpdir XXXX.nim)
+    out=$(echo "$src" | sed 's/\.nim//')
+    cat "$1" > "$src"
+    quiet nim compile --verbosity:0 "$src"
+    echo "$out"
+    rm "$src"
+}

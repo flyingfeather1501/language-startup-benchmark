@@ -18,6 +18,7 @@ exe_haskell=$(compile:haskell hello.hs)
 exe_vala=$(compile:vala hello.vala)
 exe_folder_java=$(compile:java hello.java)
 exe_rust=$(compile:rust hello.rs)
+exe_nim=$(compile:nim hello.nim)
 
 # interpreted languages
 report_time python python -c 'print("hello")'

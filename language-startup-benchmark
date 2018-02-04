@@ -11,33 +11,32 @@ source compile.bash # compile:lang stuff
 source report.bash # report_time etc.
 
 # interpreted languages
-report_time python python -c 'print("hello")'
-report_time perl perl -e 'print("hello\n")'
-report_time ruby ruby -e 'puts "hello"'
-report_time lua lua -e 'print("hello")'
+report_time python python hello.py
+report_time perl perl hello.perl
+report_time ruby ruby hello.rb
+report_time lua lua hello.lua
 # shell
-report_time bash bash -c 'echo "hello"'
-report_time fish fish -c 'echo "hello"'
-report_time zsh zsh -c 'echo "hello"'
+report_time bash bash hello.sh
+report_time fish fish hello.sh
+report_time zsh zsh hello.sh
 
 # lisp family
-report_time racket racket -e '(displayln "hello")'
-report_time guile guile -c '(display "hello\n")'
+report_time racket racket hello.rkt
+report_time racket/base racket hello.rkt-base
+report_time "guile scheme" guile hello.scm
 report_time sbcl sbcl --script hello.lisp
 report_time clisp clisp hello.lisp
-report_time "emacs lisp" emacs -batch -eval '(princ "hello\n")'
+report_time "emacs lisp" emacs --script hello.el
 
-report_time clojure clojure -e '(println "hello")'
+report_time clojure clojure hello.clj
 
-# since there's no 'run code on command line' functionality built in, use a file
-# to avoid adding additional overhead with 'echo | io /dev/fd/0'
 report_time io io hello.io
 
 # js family
-report_time node node --eval 'console.log("hello");'
-report_time gjs gjs -c 'print("hello");'
+report_time node node hello.nodejs
+report_time gjs gjs hello.gjs
 
-report_time php php -n -r 'print("hello\n");' # -n: don't use configuration files
+report_time php php -n hello.php # -n: don't use configuration files
 
 report_time "go (go run)" go run hello.go # this times the compilation as well
 

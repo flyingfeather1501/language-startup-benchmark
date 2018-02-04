@@ -24,6 +24,7 @@ report_time zsh zsh hello.sh
 report_time racket racket hello.rkt
 report_time racket/base racket hello.rkt-base
 report_time "guile scheme" guile hello.scm
+report_time "chez scheme" scheme --script hello.scm
 report_time sbcl sbcl --script hello.lisp
 report_time clisp clisp hello.lisp
 report_time "emacs lisp" emacs --script hello.el

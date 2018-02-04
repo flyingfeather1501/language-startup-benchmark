@@ -23,8 +23,8 @@ report_time zsh zsh -c 'echo "hello"'
 # lisp family
 report_time racket racket -e '(displayln "hello")'
 report_time guile guile -c '(display "hello\n")'
-report_time sbcl sbcl --noinform --non-interactive --eval '(format t "hello~%")'
-report_time clisp clisp -q -x '(format t "hello~%")'
+report_time sbcl sbcl --script hello.lisp
+report_time clisp clisp hello.lisp
 report_time "emacs lisp" emacs -batch -eval '(princ "hello\n")'
 
 report_time clojure clojure -e '(println "hello")'

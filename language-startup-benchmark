@@ -80,6 +80,10 @@ report_time "emacs lisp" emacs -batch -eval '(princ "hello\n")'
 
 report_time clojure clojure -e '(println "hello")'
 
+# since there's no 'run code on command line' functionality built in, use a file
+# to avoid adding additional overhead with 'echo | io /dev/fd/0'
+report_time io io hello.io
+
 # js family
 report_time node node --eval 'console.log("hello");'
 report_time gjs gjs -c 'print("hello");'

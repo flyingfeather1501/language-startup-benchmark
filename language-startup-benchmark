@@ -7,50 +7,12 @@
 # I'm taking the "real" field in bash's "time" output
 # (Specifically, TIMEFORMAT="%3R")
 
-# compiling functions
-source compile.bash
+source compile.bash # compile:lang stuff
+source report.bash # report_time etc.
 
 # slightly easier to read
 quiet () {
     "$@" >/dev/null 2>/dev/null
-}
-
-report_success () {
-    # report_success <language> <output> <time>
-    cat <<JSON
-{"status":"success","report":{"language":"$1","output":"$2","time":$3,"unit":"second"}}
-JSON
-}
-
-report_status () {
-    cat <<JSON
-{"status": "$1"}
-JSON
-}
-
-# time the command and format the result
-report_time () {
-    TIMEFORMAT="%3R"
-    language="$1"; shift 1
-    tmp_time=$(mktemp)
-    tmp_cmd_output=$(mktemp)
-
-    # { time stuff }: output of stuff -> stdout, time -> stderr
-    if ! { time "$@" 2>/dev/null; } > "$tmp_cmd_output" 2> "$tmp_time"
-    then
-        error "$* failed"
-        return
-    fi
-
-    time_seconds=$(cat "$tmp_time")
-    output=$(cat "$tmp_cmd_output")
-    report_success "$language" "$output" "$time_seconds"
-    rm "$tmp_time" "$tmp_cmd_output"
-}
-
-error () {
-    echo '{"status":"failed",'\
-          '"message": "'"$*"'"}'
 }
 
 # get compiled executables ready

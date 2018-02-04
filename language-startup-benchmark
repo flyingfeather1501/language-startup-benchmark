@@ -10,16 +10,6 @@
 source compile.bash # compile:lang stuff
 source report.bash # report_time etc.
 
-# get compiled executables ready
-report_status "compiling"
-exe_go=$(compile:go hello.go)
-exe_gcc=$(compile:gcc hello.c)
-exe_haskell=$(compile:haskell hello.hs)
-exe_vala=$(compile:vala hello.vala)
-exe_folder_java=$(compile:java hello.java)
-exe_rust=$(compile:rust hello.rs)
-exe_nim=$(compile:nim hello.nim)
-
 # interpreted languages
 report_time python python -c 'print("hello")'
 report_time perl perl -e 'print("hello\n")'
@@ -51,12 +41,22 @@ report_time php php -n -r 'print("hello\n");' # -n: don't use configuration file
 report_time "go (go run)" go run hello.go # this times the compilation as well
 
 # compiled languages
-report_time go "$exe_go"
-report_time gcc "$exe_gcc"
-report_time haskell "$exe_haskell"
-report_time vala "$exe_vala"
-report_time java java -cp "$exe_folder_java" hello
-report_time rust "$exe_rust"
 
-# clean up compiled artifacts
-rm "$exe_rust" "$exe_go" "$exe_gcc" "$exe_haskell" "$exe_vala" "$exe_folder_java" -rf
+# handle compile -> run -> cleanup in one place
+compile_and_time () {
+    # compile_and_time <lang> <func> <file>
+    exe=$("$2" "$3")
+    report_time "$1" "$exe"
+    rm "$exe"
+}
+
+compile_and_time go compile:go hello.go
+compile_and_time gcc compile:gcc hello.c
+compile_and_time haskell compile:haskell hello.hs
+compile_and_time vala compile:vala hello.vala
+compile_and_time rust compile:rust hello.rs
+
+# I'm unable to generalize the execution for java, so this will have to do
+exe_folder_java=$(compile:java hello.java)
+report_time java java -cp "$exe_folder_java" hello
+rm -rf "$exe_folder_java"

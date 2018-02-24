@@ -43,14 +43,6 @@ report_time "go (go run)" go run hello.go # this times the compilation as well
 
 # compiled languages
 
-# handle compile -> run -> cleanup in one place
-compile_and_time () {
-    # compile_and_time <lang> <func> <file>
-    exe=$("$2" "$3")
-    report_time "$1" "$exe"
-    rm "$exe"
-}
-
 compile_and_time go compile:go hello.go
 compile_and_time gcc compile:gcc hello.c
 compile_and_time haskell compile:haskell hello.hs

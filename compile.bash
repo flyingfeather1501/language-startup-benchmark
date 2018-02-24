@@ -7,6 +7,14 @@ quiet () {
     "$@" >/dev/null 2>/dev/null
 }
 
+# handle compile -> run -> cleanup in one place
+compile_and_time () {
+    # compile_and_time <lang> <func> <file>
+    exe=$("$2" "$3")
+    report_time "$1" "$exe"
+    rm "$exe"
+}
+
 compile:rust () {
     tmp=$(mktemp --tmpdir tmp-XXXX.rs)
     out=$(mktemp --tmpdir exe.rust.XXXX)

@@ -28,6 +28,8 @@ report_time "chez scheme" scheme --script hello.scm
 report_time sbcl sbcl --script hello.lisp
 report_time clisp clisp hello.lisp
 report_time "emacs lisp" emacs --script hello.el
+report_time "picolisp (kernel only)" picolisp hello.l
+report_time "picolisp (with pil)" pil hello.l
 
 report_time clojure clojure hello.clj
 

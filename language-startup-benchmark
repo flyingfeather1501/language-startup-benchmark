@@ -10,49 +10,62 @@
 source compile.bash # compile:lang stuff
 source report.bash # report_time etc.
 
-# interpreted languages
-report_time python python hello.py
-report_time perl perl hello.perl
-report_time ruby ruby hello.rb
-report_time lua lua hello.lua
-# shell
-report_time bash bash hello.sh
-report_time fish fish hello.sh
-report_time zsh zsh hello.sh
+benchmark () {
+    # interpreted languages
+    report_time python python hello.py
+    report_time perl perl hello.perl
+    report_time ruby ruby hello.rb
+    report_time lua lua hello.lua
+    # shell
+    report_time bash bash hello.sh
+    report_time fish fish hello.sh
+    report_time zsh zsh hello.sh
 
-# lisp family
-report_time racket racket hello.rkt
-report_time racket/base racket hello.rkt-base
-report_time "guile scheme" guile hello.scm
-report_time "chez scheme" scheme --script hello.scm
-report_time sbcl sbcl --script hello.lisp
-report_time clisp clisp hello.lisp
-report_time "emacs lisp" emacs --script hello.el
-report_time "picolisp (kernel only)" picolisp hello.l
-report_time "picolisp (with pil)" pil hello.l
+    # lisp family
+    report_time racket racket hello.rkt
+    report_time racket/base racket hello.rkt-base
+    report_time "guile scheme" guile hello.scm
+    report_time "chez scheme" scheme --script hello.scm
+    report_time sbcl sbcl --script hello.lisp
+    report_time clisp clisp hello.lisp
+    report_time "emacs lisp" emacs --script hello.el
+    report_time "picolisp (kernel only)" picolisp hello.l
+    report_time "picolisp (with pil)" pil hello.l
+    report_time clojure clojure hello.clj
 
-report_time clojure clojure hello.clj
+    report_time io io hello.io
 
-report_time io io hello.io
+    # js family
+    report_time node node hello.nodejs
+    report_time gjs gjs hello.gjs
 
-# js family
-report_time node node hello.nodejs
-report_time gjs gjs hello.gjs
+    report_time php php -n hello.php # -n: don't use configuration files
 
-report_time php php -n hello.php # -n: don't use configuration files
+    report_time "go (go run)" go run hello.go # this times the compilation as well
 
-report_time "go (go run)" go run hello.go # this times the compilation as well
+    # compiled languages
 
-# compiled languages
+    compile_and_time go compile:go hello.go
+    compile_and_time gcc compile:gcc hello.c
+    compile_and_time haskell compile:haskell hello.hs
+    compile_and_time vala compile:vala hello.vala
+    compile_and_time rust compile:rust hello.rs
+    compile_and_time nim compile:nim hello.nim
 
-compile_and_time go compile:go hello.go
-compile_and_time gcc compile:gcc hello.c
-compile_and_time haskell compile:haskell hello.hs
-compile_and_time vala compile:vala hello.vala
-compile_and_time rust compile:rust hello.rs
-compile_and_time nim compile:nim hello.nim
+    # I'm unable to generalize the execution for java, so this will have to do
+    exe_folder_java=$(compile:java hello.java)
+    report_time java java -cp "$exe_folder_java" hello
+    rm -rf "$exe_folder_java"
+}
 
-# I'm unable to generalize the execution for java, so this will have to do
-exe_folder_java=$(compile:java hello.java)
-report_time java java -cp "$exe_folder_java" hello
-rm -rf "$exe_folder_java"
+case "$1" in
+    "-h"|"--help")
+        echo "$(basename "$0") [output file]"
+        ;;
+    "")
+        benchmark
+        ;;
+    *)
+        benchmark > "$1"
+        ;;
+esac

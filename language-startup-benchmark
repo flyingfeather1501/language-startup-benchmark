@@ -25,6 +25,7 @@ benchmark () {
     # lisp family
     report_time racket racket hello.rkt
     report_time racket/base racket hello.rkt-base
+    report_time "gauche scheme" gosh hello.scm
     report_time "guile scheme" guile hello.scm
     report_time "chez scheme" scheme --script hello.scm
     report_time sbcl sbcl --script hello.lisp

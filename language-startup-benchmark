@@ -65,9 +65,9 @@ case "$1" in
         echo "$(basename "$0") [output file]"
         ;;
     "")
-        benchmark
+        benchmark | jq -cs . | sed 's/},/},\n /g'
         ;;
     *)
-        benchmark > "$1"
+        benchmark | jq -cs . | sed 's/},/},\n /g' > "$1"
         ;;
 esac

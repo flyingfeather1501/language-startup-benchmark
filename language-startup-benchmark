@@ -6,6 +6,7 @@
 #
 # I'm taking the "real" field in bash's "time" output
 # (Specifically, TIMEFORMAT="%3R")
+cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
 source compile.bash # compile:lang stuff
 source report.bash # report_time etc.

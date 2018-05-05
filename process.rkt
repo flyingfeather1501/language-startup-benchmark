@@ -4,7 +4,7 @@
          json
          threading)
 
-(define (average . vals)
+(define (average/list vals)
   (/ (apply + vals) (length vals)))
 
 (current-directory "_reports")
@@ -25,12 +25,14 @@
   (apply hash-union #:combine/key (lambda (k . vs) (flatten vs))
          (map file->lang-time-dict files)))
 
-(define (average-value d)
-  ;; dict (string . (listof number)) -> dict (string . number)
+(define (dict-average d)
+  ;; dict (any . (listof number)) -> dict (any . number)
   ;; take the average of the old value and use that as the new value
-  (map (λ (k)
-          (cons k
-                (apply average (dict-ref d k))))
-       (dict-keys d)))
+  (define (avg-iter d keys)
+    (cond [(empty? keys) d]
+          [else (avg-iter
+                  (dict-update d (first keys) average/list)
+                  (rest keys))]))
+  (avg-iter d (dict-keys d)))
 
 ;; (average-value (compute-lang-times-dict (directory-list)))

@@ -1,14 +1,12 @@
 #lang rackjure
 ;; run in project root where _reports is accessible
+
 (require racket/hash
          json
          threading)
 
 (define (average/list vals)
   (/ (apply + vals) (length vals)))
-
-(current-directory "_reports")
-(define files (directory-list))
 
 (define (file->lang-time-dict f)
   (~> (file->string f)
@@ -34,5 +32,18 @@
                   (dict-update d (first keys) average/list)
                   (rest keys))]))
   (avg-iter d (dict-keys d)))
+
+(current-directory "_reports")
+
+(~> (directory-list)
+    compute-lang-times-dict
+    dict-average
+    ((λ (d)
+        (map (λ (k)
+                (string-append (~a (dict-ref d k)) " " k))
+             (dict-keys d)))
+     _)
+    (string-join _ "\n")
+    displayln)
 
 ;; (average-value (compute-lang-times-dict (directory-list)))

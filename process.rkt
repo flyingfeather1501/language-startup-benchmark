@@ -3,7 +3,8 @@
 
 (require racket/hash
          json
-         threading)
+         threading
+         plot)
 
 (define (average/list vals)
   (/ (apply + vals) (length vals)))
@@ -33,29 +34,39 @@
                   (rest keys))]))
   (avg-iter d (dict-keys d)))
 
-;; (current-directory "_reports")
+#;(~> (directory-list #:build? #t
+                      (vector-ref (current-command-line-arguments) 0))
+      (filter (λ (p) (path-has-extension? p ".json")) _)
+      compute-lang-times-dict
+      dict-average
+      dict->list
+      (sort _ < #:key cdr) ; sort by second element (time)
+      (map (λ (i) (string-append (~a (cdr i)) " "
+                                 "\"" (car i) "\"")) _)
+      (string-join _ "\n")
+      displayln)
 
-(define (lang-time-dict->string d)
-  (~> (dict->list d)
+(define lang-time-dict
+  (~> (directory-list #:build? #t
+                      (vector-ref (current-command-line-arguments) 0))
+      (filter (λ (p) (path-has-extension? p ".json")) _)
+      compute-lang-times-dict
+      dict-average
+      dict->list
       (sort _ < #:key cdr)
-      (map (λ (x) (string-append (~a (cdr x)) " "
-                                 "\"" (car x) "\""))
-           _)
-      ;; add 0, 1, 2... in front
-      (map (λ (s i) (string-append s i))
-           _
-           (stream->list (in-range (length d))))))
+      (map (λ (x) (vector (car x) (cdr x))) _)))
 
-(~> (directory-list #:build? #t
-                    (vector-ref (current-command-line-arguments) 0))
-    (filter (λ (p) (path-has-extension? p ".json")) _)
-    compute-lang-times-dict
-    dict-average
-    dict->list
-    (sort _ < #:key cdr) ; sort by second element (time)
-    (map (λ (i) (string-append (~a (cdr i)) " "
-                               "\"" (car i) "\"")) _)
-    (string-join _ "\n")
-    displayln)
-
-;; (average-value (compute-lang-times-dict (directory-list)))
+(parameterize ([plot-font-size 14]
+               [plot-title "Startup time for various languages"]
+               [plot-x-label "Language"]
+               [plot-y-label "Startup time (seconds)"]
+               [plot-x-tick-label-anchor 'top-left]
+               [plot-x-tick-label-angle -45]
+               [plot-tick-size 0]
+               [plot-width 800] [plot-height 500])
+  (plot-file
+   (discrete-histogram
+    lang-time-dict
+    #:x-min 0 #:x-max #f
+    #:y-min 0 #:y-max 1)
+   "histogram.png" 'png))

@@ -8,6 +8,7 @@
   (/ (apply + vals) (length vals)))
 
 (current-directory "_reports")
+(define files (directory-list))
 
 (define (file->lang-time-dict f)
   (~> (file->string f)
@@ -19,17 +20,10 @@
            _)
       make-immutable-hash)) ; ((title . time) (title . time) ...)
 
-
 (define (compute-lang-times-dict files)
-  ;; files: listof path?
-  ;; A dictionary with languages as keys and all the times as values
-  (map (λ (l)
-          "Grab the times of this language from each dict"
-          (~> (map file->lang-time-dict files)
-              (map (λ (d) (dict-ref d l)) _)
-              (cons l _))) ; attach the language key
-       ;; the languages
-       (dict-keys (file->lang-time-dict (first files)))))
+  ;; Computes a dictionary with languages as keys and all the times as values
+  (apply hash-union #:combine/key (lambda (k . vs) (flatten vs))
+         (map file->lang-time-dict files)))
 
 (define (average-value d)
   ;; dict (string . (listof number)) -> dict (string . number)

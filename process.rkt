@@ -33,16 +33,28 @@
                   (rest keys))]))
   (avg-iter d (dict-keys d)))
 
-(current-directory "_reports")
+;; (current-directory "_reports")
 
-(~> (directory-list)
+(define (lang-time-dict->string d)
+  (~> (dict->list d)
+      (sort _ < #:key cdr)
+      (map (λ (x) (string-append (~a (cdr x)) " "
+                                 "\"" (car x) "\""))
+           _)
+      ;; add 0, 1, 2... in front
+      (map (λ (s i) (string-append s i))
+           _
+           (stream->list (in-range (length d))))))
+
+(~> (directory-list #:build? #t
+                    (vector-ref (current-command-line-arguments) 0))
+    (filter (λ (p) (path-has-extension? p ".json")) _)
     compute-lang-times-dict
     dict-average
-    ((λ (d)
-        (map (λ (k)
-                (string-append (~a (dict-ref d k)) " " k))
-             (dict-keys d)))
-     _)
+    dict->list
+    (sort _ < #:key cdr) ; sort by second element (time)
+    (map (λ (i) (string-append (~a (cdr i)) " "
+                               "\"" (car i) "\"")) _)
     (string-join _ "\n")
     displayln)
 

@@ -1,2 +1,5 @@
 .fuse_hidden*
 *~
+*.png
+*.txt
+*.json

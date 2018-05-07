@@ -34,39 +34,53 @@
                   (rest keys))]))
   (avg-iter d (dict-keys d)))
 
-#;(~> (directory-list #:build? #t
-                      (vector-ref (current-command-line-arguments) 0))
-      (filter (λ (p) (path-has-extension? p ".json")) _)
-      compute-lang-times-dict
-      dict-average
-      dict->list
-      (sort _ < #:key cdr) ; sort by second element (time)
-      (map (λ (i) (string-append (~a (cdr i)) " "
-                                 "\"" (car i) "\"")) _)
-      (string-join _ "\n")
-      displayln)
+(define (generate-text-report alist [filename "language-startup-times.txt"])
+  (define out
+    (~> alist
+        (map (λ (i) (string-append (~a (cdr i)) " "
+                                   "\"" (car i) "\"")) _)
+        (string-join _ "\n")))
+  (with-output-to-file filename #:exists 'replace
+                       (λ () (displayln out))))
 
-(define lang-time-dict
-  (~> (directory-list #:build? #t
-                      (vector-ref (current-command-line-arguments) 0))
-      (filter (λ (p) (path-has-extension? p ".json")) _)
-      compute-lang-times-dict
-      dict-average
-      dict->list
-      (sort _ < #:key cdr)
-      (map (λ (x) (vector (car x) (cdr x))) _)))
+(define (generate-json-report alist [filename "language-startup-times.json"])
+  (define out (jsexpr->string
+                (make-hasheq
+                  (map (λ (x)
+                          (cons
+                             (string->symbol (car x))
+                             (cdr x)))
+                       alist))))
+  (with-output-to-file filename #:exists 'replace
+                       (λ () (displayln out))))
 
-(parameterize ([plot-font-size 14]
-               [plot-title "Startup time for various languages"]
-               [plot-x-label "Language"]
-               [plot-y-label "Startup time (seconds)"]
-               [plot-x-tick-label-anchor 'top-left]
-               [plot-x-tick-label-angle -45]
-               [plot-tick-size 0]
-               [plot-width 800] [plot-height 500])
-  (plot-file
-   (discrete-histogram
-    lang-time-dict
-    #:x-min 0 #:x-max #f
-    #:y-min 0 #:y-max 1)
-   "histogram.png" 'png))
+(define (generate-histogram-report alist [filename "language-startup-times.png"])
+   (parameterize ([plot-font-size 14]
+                  [plot-title "Startup time for various languages"]
+                  [plot-x-label "Language"]
+                  [plot-y-label "Startup time (seconds)"]
+                  [plot-x-tick-label-anchor 'top-left]
+                  [plot-x-tick-label-angle -45]
+                  [plot-tick-size 0]
+                  [plot-width 800] [plot-height 500])
+     (plot-file
+      (discrete-histogram
+       (map (λ (x) (vector (car x) (cdr x))) alist)
+       #:x-min 0 #:x-max #f
+       #:y-min 0 #:y-max 1)
+      filename 'png)))
+
+(define (main)
+  (define lang-time-alist
+    (~> (directory-list #:build? #t
+                        (vector-ref (current-command-line-arguments) 0))
+        (filter (λ (p) (path-has-extension? p ".json")) _)
+        compute-lang-times-dict
+        dict-average
+        dict->list
+        (sort _ < #:key cdr)))
+  (generate-histogram-report lang-time-alist)
+  (generate-text-report lang-time-alist)
+  (generate-json-report lang-time-alist))
+
+(and (> (vector-length (current-command-line-arguments)) 0) (main))

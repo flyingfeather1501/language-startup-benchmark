@@ -12,6 +12,7 @@ source compile.bash # compile:lang stuff
 source report.bash # report_time etc.
 
 benchmark () {
+    pushd hello || exit 127
     # interpreted languages
     report_time python python hello.py
     report_time perl perl hello.perl
@@ -58,6 +59,7 @@ benchmark () {
     exe_folder_java=$(compile:java hello.java)
     report_time java java -cp "$exe_folder_java" hello
     rm -rf "$exe_folder_java"
+    popd || exit 127
 }
 
 case "$1" in
